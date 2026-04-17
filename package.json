@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev:next": "next dev -H 0.0.0.0",
-    "dev:py": "cd py-backend && (test -d .venv || python3 -m venv .venv) && .venv/bin/pip install -q -r requirements.txt && .venv/bin/uvicorn main:app --host 0.0.0.0 --port 8001 --reload",
+    "dev:py": "cd py-backend && python -m venv .venv 2>nul & .venv\\Scripts\\pip install -q -r requirements.txt & .venv\\Scripts\\uvicorn main:app --host 0.0.0.0 --port 8001 --reload",
+    "dev:py:unix": "cd py-backend && python3 -m venv .venv 2>/dev/null; .venv/bin/pip install -q -r requirements.txt && .venv/bin/uvicorn main:app --host 0.0.0.0 --port 8001 --reload",
     "dev": "concurrently -n next,py -c cyan,magenta \"npm:dev:next\" \"npm:dev:py\"",
     "build": "next build",
     "start": "next start",
