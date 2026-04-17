@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
-import { getFundamentals } from "@/lib/api/unified";
+import { getFundamentals, getHistorical } from "@/lib/api/unified";
+import { pyIndicators } from "@/lib/api/py";
+import { finnhubCompanyNews } from "@/lib/api/finnhub";
+import { annualizedVol, maxDrawdown, sharpeRatio } from "@/lib/analysis/risk";
+import { claudeAvailable, synthesizeVerdict } from "@/lib/api/claude";
 
-// Phase 3 stub. In Phase 6 this is replaced with a full Claude call
-// that reads fundamentals, technicals, news and filings.
 export const dynamic = "force-dynamic";
 
 export async function GET(
@@ -10,31 +12,59 @@ export async function GET(
   { params }: { params: Promise<{ ticker: string }> }
 ) {
   const { ticker } = await params;
-  if (!process.env.ANTHROPIC_API_KEY) {
+
+  if (!claudeAvailable()) {
     return NextResponse.json(
       { error: "ANTHROPIC_API_KEY missing" },
       { status: 503 }
     );
   }
-  const fundamentals = await getFundamentals(ticker);
+
+  const [fundamentals, historical, news] = await Promise.all([
+    getFundamentals(ticker),
+    getHistorical(ticker, "1y", "1d"),
+    finnhubCompanyNews(ticker, 7),
+  ]);
+
   if (!fundamentals) {
     return NextResponse.json({ error: "no data" }, { status: 404 });
   }
-  // Real Claude integration lands in Phase 6. Returning a minimal stub for now.
-  return NextResponse.json({
-    verdict: "mantener",
-    confidence: 0.5,
-    bull: [
-      "Análisis profundo disponible en Fase 6.",
-      "La estructura y el flujo ya está lista.",
-      "Configuración con Claude pendiente.",
-    ],
-    bear: [
-      "Sin integración completa a Claude todavía.",
-      "El veredicto heurístico se usa de base.",
-      "Falta combinar técnicos + macro + news.",
-    ],
-    summary: "La capa AI se activa completa en la Fase 6. Por ahora el veredicto heurístico del lado cliente es el que vale.",
-    aiPowered: false,
+
+  let technicals: Record<string, unknown> = {};
+  if (historical?.candles.length) {
+    try {
+      const ind = await pyIndicators(historical.candles);
+      const last = ind.points[ind.points.length - 1];
+      technicals = {
+        rsi14: last?.rsi14 ?? null,
+        macd: last?.macd ?? null,
+        ema20: last?.ema20 ?? null,
+        ema50: last?.ema50 ?? null,
+        ema200: last?.ema200 ?? null,
+        pattern: ind.snapshot.pattern,
+      };
+    } catch {
+      // keep empty
+    }
+  }
+
+  const risk = {
+    annualizedVol: historical ? annualizedVol(historical.candles) : null,
+    maxDrawdown: historical ? maxDrawdown(historical.candles) : null,
+    sharpe: historical ? sharpeRatio(historical.candles) : null,
+  };
+
+  const verdict = await synthesizeVerdict({
+    symbol: ticker,
+    fundamentals: fundamentals as unknown as Record<string, unknown>,
+    technicals,
+    risk,
+    newsHeadlines: news.slice(0, 10).map((n) => n.headline),
   });
+
+  if (!verdict) {
+    return NextResponse.json({ error: "claude failed" }, { status: 502 });
+  }
+
+  return NextResponse.json({ ...verdict, aiPowered: true });
 }

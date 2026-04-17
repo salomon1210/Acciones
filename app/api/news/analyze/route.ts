@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { claudeAvailable, summarizeNews } from "@/lib/api/claude";
 
 export const dynamic = "force-dynamic";
 
@@ -8,7 +9,6 @@ type Body = {
   tickers?: string[];
 };
 
-// Heuristic reading of a news item. Fase 6 swaps this for a real Claude Haiku call.
 function heuristicReading(b: Body) {
   const text = (b.headline + " " + (b.summary ?? "")).toLowerCase();
   const positive = /beat|surge|soar|record|grows|strong|upgrade|rally|raise|boost|expand/.test(text);
@@ -35,10 +35,13 @@ export async function POST(req: Request) {
   const body = (await req.json()) as Body;
   if (!body.headline) return NextResponse.json({ error: "missing headline" }, { status: 400 });
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!claudeAvailable()) {
     return NextResponse.json(heuristicReading(body));
   }
 
-  // Claude integration lives in Fase 6. Return heuristic for now.
-  return NextResponse.json(heuristicReading(body));
+  const res = await summarizeNews(body).catch(() => null);
+  if (!res) {
+    return NextResponse.json(heuristicReading(body));
+  }
+  return NextResponse.json({ ...res, aiPowered: true });
 }
