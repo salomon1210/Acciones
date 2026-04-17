@@ -1,10 +1,15 @@
-export default function NewsPlaceholder() {
+import { NewsFeed } from "@/components/news/NewsFeed";
+
+export const dynamic = "force-dynamic";
+
+export default function NewsPage() {
   return (
-    <div className="p-6">
-      <h1 className="text-lg font-semibold">Noticias</h1>
-      <p className="text-xs text-fg-dim mt-1">
-        Feed en vivo con sentiment — disponible en Fase 4.
-      </p>
+    <div className="p-4 space-y-4 max-w-5xl mx-auto">
+      <div>
+        <h1 className="text-lg font-semibold text-fg">Noticias</h1>
+        <p className="text-xs text-fg-dim mt-0.5">Feed en vivo con sentiment. Hacé clic en una noticia para ver qué significa.</p>
+      </div>
+      <NewsFeed />
     </div>
   );
 }
