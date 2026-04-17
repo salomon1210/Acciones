@@ -138,7 +138,7 @@ export default async function AnalyzerPage({
   }));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-3 md:p-4 max-w-7xl mx-auto">
       <AnalyzerHeader
         symbol={ticker}
         assetType={assetType}
@@ -148,19 +148,21 @@ export default async function AnalyzerPage({
       />
 
       <Tabs defaultValue="overview">
-        <TabsList className="flex flex-wrap h-auto">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="fundamentals">Fundamentals</TabsTrigger>
-          <TabsTrigger value="technicals">Técnico</TabsTrigger>
-          <TabsTrigger value="valuation">Valuation</TabsTrigger>
-          <TabsTrigger value="risk">Riesgo</TabsTrigger>
-          <TabsTrigger value="moats">Moats</TabsTrigger>
-          <TabsTrigger value="catalysts">Catalizadores</TabsTrigger>
-          <TabsTrigger value="peers">Peers</TabsTrigger>
-          <TabsTrigger value="news">Noticias</TabsTrigger>
-          <TabsTrigger value="verdict">Veredicto</TabsTrigger>
-          <TabsTrigger value="checklist">Checklist</TabsTrigger>
-        </TabsList>
+        <div className="-mx-3 md:mx-0 overflow-x-auto scrollbar-none">
+          <TabsList className="flex md:flex-wrap h-auto px-3 md:px-0 whitespace-nowrap min-w-max md:min-w-0">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="fundamentals">Fundamentals</TabsTrigger>
+            <TabsTrigger value="technicals">Técnico</TabsTrigger>
+            <TabsTrigger value="valuation">Valuation</TabsTrigger>
+            <TabsTrigger value="risk">Riesgo</TabsTrigger>
+            <TabsTrigger value="moats">Moats</TabsTrigger>
+            <TabsTrigger value="catalysts">Catalizadores</TabsTrigger>
+            <TabsTrigger value="peers">Peers</TabsTrigger>
+            <TabsTrigger value="news">Noticias</TabsTrigger>
+            <TabsTrigger value="verdict">Veredicto</TabsTrigger>
+            <TabsTrigger value="checklist">Checklist</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="overview">
           <OverviewTab fundamentals={fundamentals} />

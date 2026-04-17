@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { Search, Activity } from "lucide-react";
+import { Search, Activity, Menu } from "lucide-react";
 import { useUI } from "@/lib/stores/ui";
 
 function formatClock(d: Date): string {
@@ -15,7 +15,6 @@ function formatClock(d: Date): string {
 }
 
 function marketStatus(now: Date): { label: string; tone: "pos" | "warn" | "dim" } {
-  // NYSE/NASDAQ: Mon-Fri, 09:30-16:00 ET (ET = UTC-4 in summer, UTC-5 in winter; use UTC-4 as default)
   const utcHour = now.getUTCHours() + now.getUTCMinutes() / 60;
   const etHour = (utcHour - 4 + 24) % 24;
   const day = now.getUTCDay();
@@ -28,6 +27,7 @@ function marketStatus(now: Date): { label: string; tone: "pos" | "warn" | "dim" 
 
 export function TopBar() {
   const setCommandOpen = useUI((s) => s.setCommandOpen);
+  const setMobileNavOpen = useUI((s) => s.setMobileNavOpen);
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -37,19 +37,32 @@ export function TopBar() {
   }, []);
 
   const status = now ? marketStatus(now) : { label: "—", tone: "dim" as const };
+  const shortStatus =
+    status.tone === "pos" ? "Abierto" : status.tone === "warn" ? "Pre/After" : status.label.startsWith("Mercado cerrado") ? "Cerrado" : "Cerrado";
 
   return (
-    <header className="flex h-12 shrink-0 items-center gap-3 border-b border-border bg-surface px-4">
+    <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border bg-surface px-3 md:px-4">
       <button
-        onClick={() => setCommandOpen(true)}
-        className="flex h-8 w-[360px] items-center gap-2 rounded-md border border-border bg-bg px-3 text-xs text-fg-dim hover:text-fg transition-colors"
+        onClick={() => setMobileNavOpen(true)}
+        className="md:hidden rounded p-2 -ml-1 text-fg-dim hover:text-fg hover:bg-surface-2"
+        aria-label="Abrir menú"
       >
-        <Search className="h-3.5 w-3.5" />
-        <span className="flex-1 text-left">Buscar ticker, sección, preset…</span>
-        <span className="chip !px-1.5 !py-0">⌘K</span>
+        <Menu className="h-5 w-5" />
       </button>
 
-      <div className="ml-auto flex items-center gap-4 text-xs">
+      <button
+        onClick={() => setCommandOpen(true)}
+        className="flex h-8 flex-1 md:flex-none md:w-[360px] items-center gap-2 rounded-md border border-border bg-bg px-3 text-xs text-fg-dim hover:text-fg transition-colors min-w-0"
+      >
+        <Search className="h-3.5 w-3.5 shrink-0" />
+        <span className="flex-1 text-left truncate">
+          <span className="hidden md:inline">Buscar ticker, sección, preset…</span>
+          <span className="md:hidden">Buscar ticker…</span>
+        </span>
+        <span className="chip !px-1.5 !py-0 hidden md:inline">⌘K</span>
+      </button>
+
+      <div className="ml-auto flex items-center gap-3 md:gap-4 text-xs">
         <div className="flex items-center gap-1.5">
           <Activity
             className={
@@ -65,10 +78,11 @@ export function TopBar() {
               status.tone === "pos" ? "pos-text" : status.tone === "warn" ? "warn-text" : "text-fg-dim"
             }
           >
-            {status.label}
+            <span className="hidden md:inline">{status.label}</span>
+            <span className="md:hidden">{shortStatus}</span>
           </span>
         </div>
-        <div className="num text-fg-dim tabular-nums min-w-[64px] text-right">
+        <div className="num text-fg-dim tabular-nums min-w-[52px] md:min-w-[64px] text-right">
           {now ? formatClock(now) : "—"}
         </div>
       </div>

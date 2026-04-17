@@ -21,7 +21,7 @@ export default function GlossaryPage() {
   }, {});
 
   return (
-    <div className="p-6 space-y-4 max-w-4xl">
+    <div className="p-3 md:p-6 space-y-4 max-w-4xl mx-auto">
       <div>
         <h1 className="text-lg font-semibold">Glosario</h1>
         <p className="text-xs text-fg-dim mt-1 leading-relaxed">

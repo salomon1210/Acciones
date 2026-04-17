@@ -109,3 +109,34 @@
     height: 1px;
   }
 }
+
+@layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (max-width: 640px) {
+  html,
+  body {
+    font-size: 15px;
+  }
+  /* Prevent iOS Safari from zooming in when focusing inputs */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

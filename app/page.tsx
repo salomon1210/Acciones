@@ -6,7 +6,7 @@ import { AlertsStatus } from "@/components/dashboard/AlertsStatus";
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-4 p-6">
+    <div className="space-y-4 p-3 md:p-6">
       <div>
         <h1 className="text-lg font-semibold text-fg">Dashboard</h1>
         <p className="text-xs text-fg-dim mt-0.5">
