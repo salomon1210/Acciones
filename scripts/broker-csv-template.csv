@@ -1,0 +1,7 @@
+symbol,quantity,avgCost,assetType,sector,geography,currency
+AAPL,10,145.30,equity,Technology,USA,USD
+MSFT,5,290.00,equity,Technology,USA,USD
+GOOGL,8,135.20,equity,Technology,USA,USD
+SPY,20,410.50,etf,Broad Market,USA,USD
+TLT,15,95.10,etf,Bonds,USA,USD
+BRK-B,4,340.00,equity,Financials,USA,USD
