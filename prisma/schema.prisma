@@ -1,0 +1,96 @@
+// Investment Command — data model (SQLite)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Watchlist {
+  id        Int      @id @default(autoincrement())
+  symbol    String   @unique
+  assetType String   @default("equity") // equity | etf | crypto | bond
+  createdAt DateTime @default(now())
+}
+
+model Position {
+  id            Int      @id @default(autoincrement())
+  source        String   // binance | broker-csv | manual
+  symbol        String
+  assetType     String   @default("equity")
+  quantity      Float
+  avgCost       Float
+  currency      String   @default("USD")
+  geography     String?
+  sector        String?
+  updatedAt     DateTime @updatedAt
+  createdAt     DateTime @default(now())
+
+  @@unique([source, symbol])
+}
+
+model PortfolioSnapshot {
+  id         Int      @id @default(autoincrement())
+  takenAt    DateTime @default(now())
+  totalValue Float
+  pnlDay     Float
+  pnlTotal   Float
+  breakdown  String   // JSON stringified
+}
+
+model Alert {
+  id          Int      @id @default(autoincrement())
+  symbol      String
+  type        String   // price | pct_change | volume | news | rsi | macd_cross | sma_cross | earnings
+  config      String   // JSON stringified payload
+  active      Boolean  @default(true)
+  lastTriggered DateTime?
+  createdAt   DateTime @default(now())
+}
+
+model AlertEvent {
+  id        Int      @id @default(autoincrement())
+  alertId   Int
+  firedAt   DateTime @default(now())
+  message   String
+  payload   String   // JSON
+}
+
+model NewsItem {
+  id         Int      @id @default(autoincrement())
+  externalId String?  @unique
+  source     String
+  title      String
+  url        String
+  summary    String?
+  sentiment  String   @default("neutral")
+  tickers    String   @default("[]") // JSON stringified array
+  category   String   @default("general")
+  publishedAt DateTime
+  createdAt   DateTime @default(now())
+}
+
+model Briefing {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @default(now())
+  markdown  String
+  metadata  String   @default("{}") // JSON
+}
+
+model AnalysisHistory {
+  id         Int      @id @default(autoincrement())
+  symbol     String
+  verdict    String   // BUY | HOLD | AVOID
+  confidence Int
+  payload    String   // JSON full
+  createdAt  DateTime @default(now())
+}
+
+model ApiCache {
+  key       String   @id
+  payload   String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}

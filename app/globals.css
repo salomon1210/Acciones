@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root,
+  .dark {
+    --bg: 220 10% 4%;           /* #0A0B0D */
+    --surface: 222 14% 8%;      /* #111317 */
+    --surface-2: 222 14% 11%;   /* slightly lighter */
+    --border: 222 12% 13%;      /* #1C1F26 */
+    --fg: 216 10% 91%;          /* #E6E8EB */
+    --fg-dim: 220 11% 59%;      /* #8B92A0 */
+    --fg-muted: 220 10% 40%;
+    --pos: 152 100% 42%;        /* #00D97E */
+    --neg: 351 90% 62%;         /* #F5455C */
+    --warn: 39 90% 55%;         /* #F5A524 */
+    --info: 210 90% 60%;
+    --accent: 216 10% 91%;
+    --accent-fg: 220 10% 4%;
+    --ring: 216 10% 70%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  html,
+  body {
+    background: hsl(var(--bg));
+    color: hsl(var(--fg));
+    font-feature-settings: "cv11", "ss01", "ss03";
+  }
+
+  ::selection {
+    background: hsl(var(--fg) / 0.2);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--fg-muted));
+  }
+}
+
+@layer components {
+  .num {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  .ticker {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .card {
+    background: hsl(var(--surface));
+    border: 1px solid hsl(var(--border));
+    border-radius: 6px;
+  }
+
+  .row-hover {
+    transition: background-color 150ms ease;
+  }
+  .row-hover:hover {
+    background: hsl(var(--surface-2));
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    background: hsl(var(--surface-2));
+    color: hsl(var(--fg-dim));
+    border: 1px solid hsl(var(--border));
+  }
+
+  .pos-text {
+    color: hsl(var(--pos));
+  }
+  .neg-text {
+    color: hsl(var(--neg));
+  }
+  .warn-text {
+    color: hsl(var(--warn));
+  }
+
+  .divider-dotted {
+    background-image: radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px);
+    background-size: 6px 1px;
+    background-repeat: repeat-x;
+    background-position: center;
+    height: 1px;
+  }
+}
