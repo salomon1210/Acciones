@@ -1,6 +1,6 @@
+// Server-side instrumentation hook.
+// Alert polling runs client-side every 60s via /api/alerts/check.
+// Daily briefing is triggered manually or by an external cron/scheduler.
 export async function register() {
-  if (process.env.NEXT_RUNTIME !== "nodejs") return;
-  if (process.env.NODE_ENV === "test") return;
-  const { registerCrons } = await import("@/lib/cron");
-  registerCrons();
+  // No-op. Kept for future use (e.g. OTEL tracing).
 }
